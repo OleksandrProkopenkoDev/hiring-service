@@ -10,8 +10,7 @@ assessing the applicant's knowledge.
 * [Hiring service](#hiring-service)
     * [Project description](#project-description)
     * [Initial requirements](#initial-requirements)
-    * [Set up access to gitlab registry](#set-up-access-to-gitlab-registry)
-    * [Build, deploy and run](#build-deploy-and-run)
+
 
 
 ## Initial requirements

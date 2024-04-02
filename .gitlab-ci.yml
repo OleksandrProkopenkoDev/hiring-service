@@ -1,0 +1,102 @@
+workflow:
+  rules:
+    - changes:
+        - monitaet/backend/**/*
+
+stages:
+  - build
+  - deploy
+
+build_jar:
+  tags:
+    - ubuntu
+  stage: build
+  image: maven:3.8.5-openjdk-17
+  script:
+    - cd ./monitaet/backend/hiring
+    ## Added to check codestyle by @Zakhar Kuropiatnyk
+    - mvn spotless:check
+    - mvn $MAVEN_CLI_OPTS package -DskipTests
+  artifacts:
+    paths:
+      - monitaet/backend/hiring/target
+
+build_image_feature:
+  tags:
+    - docker
+  needs:
+    - build_jar
+  when: manual
+  stage: build
+  image: docker:20.10.12
+  services:
+    - docker:20.10.12-dind
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+  script:
+    - cd ./monitaet/backend/hiring
+    - docker build -t $CI_REGISTRY_IMAGE/hiring/backend:$CI_COMMIT_REF_NAME .
+    - docker push $CI_REGISTRY_IMAGE/hiring/backend:$CI_COMMIT_REF_NAME
+  except:
+    - master
+    - dev
+
+build_image:
+  tags:
+    - docker
+  needs:
+    - build_jar
+  stage: build
+  image: docker:20.10.12
+  services:
+    - docker:20.10.12-dind
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+  script:
+    - cd ./monitaet/backend/hiring
+    - docker build -t $CI_REGISTRY_IMAGE/hiring/backend:latest .
+    - docker push $CI_REGISTRY_IMAGE/hiring/backend:latest
+  only:
+    - dev
+
+deploy_to_dev1:
+  stage: deploy
+  image: alpine:3.17.3
+  when: manual
+  environment: dev-1
+  needs:
+    - build_image_feature
+  script:
+    - chmod og= $DEV_ID_RSA
+    - apk update && apk add openssh-client
+    - mkdir -p ~/.ssh && ssh-keyscan -H -p $DEV_SERVER_PORT $DEV_SERVER_IP >> ~/.ssh/known_hosts 2>/dev/null
+    - ssh -i $DEV_ID_RSA -o StrictHostKeyChecking=yes -p $DEV_SERVER_PORT $DEV_SERVER_USER@$DEV_SERVER_IP "echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY"
+    - ssh -i $DEV_ID_RSA -o StrictHostKeyChecking=yes -p $DEV_SERVER_PORT $DEV_SERVER_USER@$DEV_SERVER_IP "echo 'TAG=$CI_COMMIT_REF_NAME' > ~/.env"
+    - ssh -i $DEV_ID_RSA -o StrictHostKeyChecking=yes -p $DEV_SERVER_PORT $DEV_SERVER_USER@$DEV_SERVER_IP "echo 'ENVIRONMENT=$(echo $CI_ENVIRONMENT_NAME | tr -d -)' >> ~/.env"
+    - ssh -i $DEV_ID_RSA -o StrictHostKeyChecking=yes -p $DEV_SERVER_PORT $DEV_SERVER_USER@$DEV_SERVER_IP "bash deploy-dev.sh"
+  except:
+    - master
+    - dev
+
+deploy_to_dev2:
+  stage: deploy
+  image: alpine:3.17.3
+  when: manual
+  environment: dev-2
+  needs:
+    - build_image_feature
+  script:
+    - chmod og= $DEV_ID_RSA
+    - apk update && apk add openssh-client
+    - mkdir -p ~/.ssh && ssh-keyscan -H -p $DEV_SERVER_PORT $DEV_SERVER_IP >> ~/.ssh/known_hosts 2>/dev/null
+    - ssh -i $DEV_ID_RSA -o StrictHostKeyChecking=yes -p $DEV_SERVER_PORT $DEV_SERVER_USER@$DEV_SERVER_IP "echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY"
+    - ssh -i $DEV_ID_RSA -o StrictHostKeyChecking=yes -p $DEV_SERVER_PORT $DEV_SERVER_USER@$DEV_SERVER_IP "echo 'TAG=$CI_COMMIT_REF_NAME' > ~/.env"
+    - ssh -i $DEV_ID_RSA -o StrictHostKeyChecking=yes -p $DEV_SERVER_PORT $DEV_SERVER_USER@$DEV_SERVER_IP "echo 'ENVIRONMENT=$(echo $CI_ENVIRONMENT_NAME | tr -d -)' >> ~/.env"
+    - ssh -i $DEV_ID_RSA -o StrictHostKeyChecking=yes -p $DEV_SERVER_PORT $DEV_SERVER_USER@$DEV_SERVER_IP "bash deploy-dev.sh"
+  except:
+    - master
+    - dev

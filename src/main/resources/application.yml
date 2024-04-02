@@ -1,0 +1,56 @@
+env:
+  host: localhost
+  database:
+    name: hiring_service
+    password: ${TRAINING_SERVICE_DB_USER_PASSWORD}
+    postgres:
+      port: 5433
+    mongo:
+      port: 27777
+
+keycloak:
+  url: http://${env.host}:9080
+  realm: monitet-service-realm
+  clientId: monitet-service-client
+  client-secret: VBY5gvsH4YaU60nBDSv6e0MzEYjACCOP
+
+spring:
+  mail:
+    host: mail.itmont.de
+    port: 587
+    username: no-reply@itmont.de
+    password: weTpeq-rocfe7-dupzob
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  datasource:
+    url: jdbc:postgresql://${env.host}:${env.database.postgres.port}/${env.database.name}
+    username: sa
+    password: ${env.database.password}
+    hikari:
+      schema: ${env.database.name}
+
+  data:
+    mongodb:
+      uri: mongodb://sa:${env.database.password}@${env.host}:${env.database.mongo.port}/
+      database: ${env.database.name}
+      auto-index-creation: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${keycloak.url}/realms/${keycloak.realm}
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+  flyway:
+    out-of-order: true
+
+  servlet:
+    multipart:
+      max-file-size: 16MB
+      max-request-size: 16MB

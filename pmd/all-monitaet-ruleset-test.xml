@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<ruleset name="Custom ruleset"
+  xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
+                             https://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+  <description>
+    The ruleset for all Monitaet java services.
+    Include all configured custom rule sets.
+  </description>
+
+  <rule ref="category/java/bestpractices.xml">
+    <exclude name="GuardLogStatement"/>
+    <exclude name="AbstractClassWithoutAbstractMethod"/>
+    <exclude name="JUnitTestsShouldIncludeAssert"/>
+  </rule>
+
+  <rule ref="category/java/codestyle.xml">
+    <exclude name="AtLeastOneConstructor"/>
+    <exclude name="MethodArgumentCouldBeFinal"/>
+    <exclude name="OnlyOneReturn"/>
+    <exclude name="ShortClassName"/>
+    <exclude name="TooManyStaticImports"/>
+  </rule>
+
+  <rule ref="category/java/design.xml">
+    <exclude name="LoosePackageCoupling"/>
+    <exclude name="LawOfDemeter"/>
+    <exclude name="AbstractClassWithoutAnyMethod"/>
+    <exclude name="UseUtilityClass"/>
+    <exclude name="TooManyMethods"/>
+    <exclude name="ExcessiveImports"/>
+  </rule>
+
+  <rule ref="category/java/documentation.xml">
+  </rule>
+
+  <rule ref="category/java/errorprone.xml">
+    <exclude name="MissingSerialVersionUID"/>
+  </rule>
+
+  <rule ref="category/java/multithreading.xml">
+  </rule>
+
+  <rule ref="category/java/performance.xml">
+  </rule>
+
+  <rule ref="category/java/codestyle.xml/LongVariable">
+    <properties>
+      <property name="minimum" value="50"/>
+    </properties>
+  </rule>
+
+  <rule ref="category/java/codestyle.xml/ShortVariable">
+    <properties>
+      <property name="minimum" value="1"/>
+    </properties>
+  </rule>
+
+  <rule ref="category/java/codestyle.xml/ShortClassName">
+    <properties>
+      <property name="minimum" value="3"/>
+    </properties>
+  </rule>
+
+  <rule ref="category/java/documentation.xml/CommentRequired">
+    <properties>
+      <property name="classCommentRequirement" value="Required"/>
+      <property name="fieldCommentRequirement" value="Ignored"/>
+      <property name="publicMethodCommentRequirement" value="Ignored"/>
+      <property name="protectedMethodCommentRequirement" value="Ignored"/>
+      <property name="enumCommentRequirement" value="Required"/>
+    </properties>
+  </rule>
+  <rule ref="category/java/documentation.xml/CommentSize">
+    <properties>
+      <property name="maxLines" value="16"/>
+      <property name="maxLineLength" value="100"/>
+    </properties>
+  </rule>
+
+  <rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals">
+    <properties>
+      <property name="maxDuplicateLiterals" value="4"/>
+      <property name="minimumLength" value="3"/>
+      <property name="skipAnnotations" value="true"/>
+      <property name="exceptionList" value=""/>
+    </properties>
+  </rule>
+
+  <!--  TODO-->
+
+  <rule ref="category/java/bestpractices.xml/JUnitTestContainsTooManyAsserts">
+    <properties>
+      <property name="maximumAsserts" value="3"/>
+    </properties>
+  </rule>
+
+  <rule ref="category/java/codestyle.xml/ClassNamingConventions">
+    <properties>
+      <property name="testClassPattern" value="^(?!Test)[A-Z][a-zA-Z0-9]*(Test|IT)$"/>
+    </properties>
+  </rule>
+
+  <rule ref="category/java/codestyle.xml/MethodNamingConventions">
+    <properties>
+      <property name="junit4TestPattern" value="[a-z][a-zA-Z0-9]+(_[a-z][a-zA-Z0-9]*)*([a-z0-9])$"/>
+      <property name="junit5TestPattern" value="[a-z][a-zA-Z0-9]+(_[a-z][a-zA-Z0-9]*)*([a-z0-9])$"/>
+    </properties>
+  </rule>
+
+  <rule ref="category/java/errorprone.xml/TestClassWithoutTestCases">
+    <properties>
+      <property name="testClassPattern"
+        value="^(?!Test)[A-Z][a-zA-Z0-9]*(Test|IT)$"/>
+    </properties>
+  </rule>
+
+  <rule ref="category/java/design.xml/SignatureDeclareThrowsException">
+    <properties>
+      <property name="IgnoreJUnitCompletely" value="true"/>
+    </properties>
+  </rule>
+
+</ruleset>

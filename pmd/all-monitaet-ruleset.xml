@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<ruleset name="Custom ruleset"
+  xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
+                             https://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+  <description>
+    The ruleset for all Monitaet java services.
+    Include all configured custom rule sets.
+  </description>
+
+  <rule ref="pmd/ruleset/bestpractices.xml"/>
+  <rule ref="pmd/ruleset/codestyle.xml"/>
+  <rule ref="pmd/ruleset/design.xml"/>
+  <rule ref="pmd/ruleset/documentation.xml"/>
+  <rule ref="pmd/ruleset/errorprone.xml"/>
+  <rule ref="pmd/ruleset/multithreading.xml"/>
+  <rule ref="pmd/ruleset/performance.xml"/>
+
+</ruleset>

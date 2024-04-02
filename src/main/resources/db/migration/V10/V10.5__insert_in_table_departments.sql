@@ -1,0 +1,18 @@
+insert into departments (name)
+values  ('Sales'),
+        ('EMEA Direct Sales'),
+        ('Account Services'),
+        ('C-Level'),
+        ('Customer Experience'),
+        ('HR'),
+        ('Customer Success'),
+        ('Quality Assurance'),
+        ('Research'),
+        ('Development'),
+        ('Marketing'),
+        ('Business-Systems'),
+        ('Office-Management'),
+        ('IT-Operations'),
+        ('Product-Management'),
+        ('IT-Infrastructure'),
+        ('Backend-Development');

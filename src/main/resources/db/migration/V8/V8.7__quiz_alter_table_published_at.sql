@@ -1,0 +1,5 @@
+ALTER TABLE quizzes
+    ADD COLUMN published_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE quizzes
+    ADD COLUMN comment VARCHAR;
+
